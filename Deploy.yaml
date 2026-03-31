@@ -1,0 +1,47 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  api:
+    build: ./backend
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks: [app]
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks: [app]
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_DB: portaldb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [app]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=adminpassword
+    command: start-dev
+    ports:
+      - "8081:8080"
+    networks: [app]
+
+networks:
+  app:
+
+volumes:
+  pgdata:
