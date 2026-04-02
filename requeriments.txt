@@ -1,0 +1,112 @@
+# Requiriments de instalação - baas-portal-dos-bancos
+
+## 1. Requisitos de sistema (host)
+- Sistema operacional: Linux (Ubuntu recomendado), macOS ou Windows WSL2
+- Docker + Docker Compose (para execução de ambiente completo)
+- Node.js 20.x (nvm recomendado) e npm 11.x
+- Git
+- Python 3 (scripts de saúde e migração), psql (opcional)
+
+## 2. Dependências de ambiente (containers)
+- PostgreSQL 15 (ou compatível)
+- Redis
+- Keycloak
+- Nginx (via image oficial)
+- Prometheus / Grafana (opcional no monitoramento)
+
+## 3. Backend (pasta backend)
+### Dependências principais
+- axios
+- bcrypt
+- cors
+- crypto-js
+- dotenv
+- express
+- helmet
+- jsonwebtoken (>=9.0.0)
+- keycloak-connect
+- knex
+- pg
+- redis
+- uuid
+- zod
+
+### Dev-dependências
+- @types/express
+- @types/node
+- @typescript-eslint/eslint-plugin
+- @typescript-eslint/parser
+- @vitest/coverage-v8
+- eslint
+- eslint-plugin-security
+- prettier
+- tsx
+- typescript
+- vitest
+
+### Comandos
+1. `cd backend`
+2. `npm install`
+3. `npm run db:migrate`
+4. `npm run db:seed` (se houver)
+5. `npm run build`
+6. `npm run dev` (desenvolvimento)
+
+## 4. Frontend (pasta frontend)
+### Dependências principais
+- @mui/icons-material
+- @mui/material
+- @mui/system
+- axios
+- keycloak-js
+- react
+- react-dom
+- react-hook-form
+- react-hot-toast
+- react-router-dom
+- zustand
+
+### Dev-dependências
+- @types/react
+- @types/react-dom
+- @typescript-eslint/eslint-plugin
+- @typescript-eslint/parser
+- @vitejs/plugin-react
+- @vitest/coverage-v8
+- eslint
+- eslint-config-prettier
+- eslint-plugin-react
+- eslint-plugin-react-hooks
+- eslint-plugin-security
+- prettier
+- typescript
+- vite
+- vitest
+
+### Comandos
+1. `cd frontend`
+2. `npm install --legacy-peer-deps`
+3. `npm run build`
+4. `npm run dev`
+
+## 5. Build Docker
+### Backend
+- `docker build -f backend/Dockerfile -t baas-portal-backend .`
+- `docker run -p 3000:3000 ...`
+
+### Frontend
+- `docker build -f frontend/Dockerfile -t baas-portal-frontend .`
+- `docker run -p 80:80 ...`
+
+### Docker Compose (recomendado)
+- `docker-compose up -d`
+- `docker-compose down`
+
+## 6. Observações
+- O `frontend/Dockerfile` usa `npm install --legacy-peer-deps` para evitar falha do `npm ci` quando `package-lock.json` não está presente.
+- Atenção a versão do `@mui/data-grid`; foi removida por falta de pacote no npm (não encontrado).
+- O backend deve usar `jsonwebtoken@^9.0.0`.
+
+## 7. Checagem de saúde
+- `python3 scripts/health-check.py`
+- `docker-compose logs -f backend` / `frontend` / `postgres`

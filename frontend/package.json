@@ -16,7 +16,6 @@
     "security:fix": "npm audit fix && npx snyk fix"
   },
   "dependencies": {
-    "@mui/data-grid": "^7.0.0",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
     "@mui/system": "^5.14.0",
