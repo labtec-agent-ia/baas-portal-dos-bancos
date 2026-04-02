@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # PostgreSQL com volume local
+  postgres:
+    image: postgres:15-alpine
+    container_name: baas-portal-db-dev
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: baas_portal_dev
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - baas-dev
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: baas-portal-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - baas-dev
+
+  # Keycloak com volume local DB
+  keycloak:
+    image: keycloak/keycloak:22.0
+    container_name: baas-portal-keycloak-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_dev
+      KC_DB_USERNAME: dev_user
+      KC_DB_PASSWORD: dev_password
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    networks:
+      - baas-dev
+    depends_on:
+      - postgres
+
+  # Adminer para gerenciar DB
+  adminer:
+    image: adminer
+    container_name: baas-portal-adminer-dev
+    ports:
+      - "8081:8080"
+    networks:
+      - baas-dev
+    depends_on:
+      - postgres
+
+  # pgAdmin para gerenciar PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: baas-portal-pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - baas-dev
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  baas-dev:
+    driver: bridge

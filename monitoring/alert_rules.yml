@@ -1,0 +1,48 @@
+groups:
+  - name: baas_portal_alerts
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Alta taxa de erros detectada"
+          description: "A taxa de erro HTTP 5xx > 5% nos últimos 5 minutos"
+
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL fora do ar"
+          description: "Database não respondendo"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / 1024 / 1024 > 512
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alto uso de memória"
+          description: "Uso de memória > 512MB"
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis fora do ar"
+          description: "Redis não respondendo"
+
+      - alert: LoginFailureSpike
+        expr: rate(login_failures_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pico de falhas de login"
+          description: "Múltiplas tentativas de login falhadas detectadas"
