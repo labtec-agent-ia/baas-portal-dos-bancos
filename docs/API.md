@@ -3,6 +3,7 @@
 ## Endpoints de Autenticação
 
 ### Login
+
 ```bash
 POST /api/auth/login
 Content-Type: application/json
@@ -26,6 +27,7 @@ Response: 200 OK
 ```
 
 ### Refresh Token
+
 ```bash
 POST /api/auth/refresh
 Content-Type: application/json
@@ -38,6 +40,7 @@ Content-Type: application/json
 ## Endpoints de PIX
 
 ### Registrar Chave PIX
+
 ```bash
 POST /api/pix/keys
 Authorization: Bearer {token}
@@ -61,12 +64,14 @@ Response: 201 Created
 ```
 
 ### Listar Chaves PIX
+
 ```bash
 GET /api/pix/keys
 Authorization: Bearer {token}
 ```
 
 ### Buscar no DICT
+
 ```bash
 GET /api/pix/dict/lookup?key=user@example.com
 Authorization: Bearer {token}
@@ -75,6 +80,7 @@ Authorization: Bearer {token}
 ## Endpoints de Clientes
 
 ### Criar Cliente
+
 ```bash
 POST /api/clients
 Authorization: Bearer {token}
@@ -89,12 +95,14 @@ Content-Type: application/json
 ```
 
 ### Listar Clientes
+
 ```bash
 GET /api/clients?limit=10&offset=0
 Authorization: Bearer {token}
 ```
 
 ### Obter Cliente
+
 ```bash
 GET /api/clients/{clientId}
 Authorization: Bearer {token}
@@ -103,6 +111,7 @@ Authorization: Bearer {token}
 ## Tratamento de Erros
 
 ### Padrão de Erro
+
 ```json
 {
   "error": {
@@ -133,11 +142,13 @@ Authorization: Bearer {token}
 ## Rate Limiting
 
 Limite de requisições por IP:
+
 - **Normal**: 100 requisições/minuto
 - **Auth**: 10 requisições/minuto
 - **PIX**: 50 requisições/minuto
 
 Header de resposta:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -147,6 +158,7 @@ X-RateLimit-Reset: 1649918400
 ## CORS
 
 Origens permitidas (configurável):
+
 ```
 http://localhost:5173  (develo)
 https://app.baas-portal-dos-bancos.com.br  (prod)
@@ -155,6 +167,7 @@ https://app.baas-portal-dos-bancos.com.br  (prod)
 ## Headers de Segurança
 
 Todos os endpoints retornam:
+
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 X-Content-Type-Options: nosniff
@@ -165,4 +178,4 @@ Content-Security-Policy: default-src 'self'
 
 ## Documentação Completa
 
-Acesse: http://localhost:3000/api/docs
+Acesse: <http://localhost:3000/api/docs>
