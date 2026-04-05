@@ -1,4 +1,4 @@
-# Segurança LGPD e Privacidade
+# Segurança LGPD e Privacidade dos produtos LabtecPay.
 
 ## 1. Política de Privacidade
 
@@ -155,11 +155,11 @@ Em caso de vazamento com dados pessoais:
 2. Comunicar titulares se houver risco
 3. Documentar incidente e ações tomadas
 4. Análise de causas raiz
-
+9
 ## 12. Contato do DPO (Data Protection Officer)
 
 📧 Email: privacy@baas-portal-dos-bancos.com
-📞 Telefone: +55 (xx) xxxxx-xxxx
+📞 Telefone: +55 (11)946681881
 📧 ANPD: Autoridade Nacional de Proteção de Dados
 
 ## 13. Versão e Histórico
