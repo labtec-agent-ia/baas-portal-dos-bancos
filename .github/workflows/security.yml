@@ -20,7 +20,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
-          scan-ref: '.'
+          scan-ref: '.
           format: 'sarif'
           output: 'trivy-results.sarif'
 
@@ -53,11 +53,11 @@ jobs:
           project: 'baas-portal-dos-bancos'
           path: '.'
           format: 'JSON'
-          args: >
+          args: >-
             --enableExperimental
 
       - name: Upload OWASP results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
           path: dependency-check-report.json
