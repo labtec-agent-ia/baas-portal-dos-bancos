@@ -383,7 +383,7 @@ baas-portal-dos-bancos/
 
 ---
 
-## 🎯 Próximas Ações (Q3 2026)
+## 🎯 Próximas Ações (Q3 2026) Falta liberação governamental.
 
 - [ ] Backend endpoints implementados
 - [ ] Integração PIX completa
