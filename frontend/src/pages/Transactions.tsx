@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { api } from '../services/api';
 
 import {
   Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, TextField
@@ -17,48 +18,41 @@ export default function Transactions() {
   const [amount, setAmount] = useState('');
   const [transfering, setTransfering] = useState(false);
 
-  const fetchTransactions = () => {
+  const fetchTransactions = async () => {
     setLoading(true);
-    // Mock de transações
-    const mockTransactions = [
-      { id: 1, date: '2026-06-23T10:30:00Z', type: 'PIX Recebido', origin: 'Maria Oliveira', amount: '1500.00', status: 'Concluído' },
-      { id: 2, date: '2026-06-22T14:45:00Z', type: 'PIX Enviado', origin: 'Mercado Livre', amount: '299.90', status: 'Concluído' },
-      { id: 3, date: '2026-06-21T09:15:00Z', type: 'PIX Recebido', origin: 'Empresa XYZ', amount: '5400.00', status: 'Concluído' },
-      { id: 4, date: '2026-06-20T18:20:00Z', type: 'PIX Enviado', origin: 'Posto Ipiranga', amount: '120.00', status: 'Concluído' }
-    ];
-
-    setTimeout(() => {
-      setTransactions(mockTransactions);
+    try {
+      const response = await api.get('/transactions');
+      setTransactions(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar transações:', error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {
     fetchTransactions();
   }, []);
 
-  const handlePixTransfer = () => {
+  const handlePixTransfer = async () => {
+    if (!pixKey || !amount) return;
     setTransfering(true);
     
-    // Simula tempo de rede para a transferência PIX
-    setTimeout(() => {
+    try {
+      await api.post('/transactions/transfer', {
+        key_value: pixKey,
+        amount: amount
+      });
       alert(`PIX de R$ ${amount} enviado com sucesso para a chave ${pixKey}!`);
       setOpenPixDialog(false);
-      
-      // Adiciona o novo PIX na lista mockada para efeito visual imediato
-      const newPix = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        type: 'PIX Enviado',
-        origin: pixKey,
-        amount: parseFloat(amount).toFixed(2),
-        status: 'Concluído'
-      };
-      setTransactions(prev => [newPix, ...prev]);
       setPixKey('');
       setAmount('');
+      fetchTransactions(); // Atualiza a lista com o dado do banco
+    } catch (error: any) {
+      alert(error.response?.data?.error?.message || 'Erro ao realizar transferência.');
+    } finally {
       setTransfering(false);
-    }, 1500);
+    }
   };
 
   return (

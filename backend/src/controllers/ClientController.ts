@@ -42,4 +42,18 @@ export class ClientController {
       next(error);
     }
   }
+
+  async getMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) return res.status(401).json({ error: { message: 'Não autenticado' } });
+
+      const client = await db('clients').where({ id: userId }).first();
+      if (!client) return res.status(404).json({ error: { message: 'Cliente não encontrado' } });
+
+      res.status(200).json(client);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

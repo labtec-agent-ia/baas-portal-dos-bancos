@@ -5,14 +5,12 @@ import { db } from '../config/database';
 export class TransactionsController {
   async listTransactions(req: Request, res: Response, next: NextFunction) {
     try {
-      const client = await db('clients').first(); // Mock auth - pega o 1º do banco (Ana Silva)
-      if (!client) {
-        return res.status(404).json({ error: { message: 'Cliente não encontrado' } });
-      }
+      const userId = (req as any).user?.id;
+      if (!userId) return res.status(401).json({ error: { message: 'Não autenticado' } });
 
       const transactions = await db('transactions')
-        .where({ client_id: client.id })
-        .orderBy('date', 'desc');
+        .where({ client_id: userId })
+        .orderBy('created_at', 'desc');
 
       res.status(200).json(transactions);
     } catch (error) {
@@ -23,6 +21,9 @@ export class TransactionsController {
   async transfer(req: Request, res: Response, next: NextFunction) {
     const trx = await db.transaction();
     try {
+      const senderId = (req as any).user?.id;
+      if (!senderId) throw new Error('Não autenticado');
+
       const { amount, key_value } = req.body;
       const parsedAmount = parseFloat(amount);
 
@@ -30,7 +31,8 @@ export class TransactionsController {
         throw new Error('Valor inválido para transferência.');
       }
       
-      const sender = await trx('clients').first(); // Mock auth
+      // Select sender locking the row for update (Pessimistic Locking)
+      const sender = await trx('clients').where({ id: senderId }).first().forUpdate();
       if (!sender) throw new Error('Remetente não encontrado.');
       if (Number(sender.balance) < parsedAmount) throw new Error('Saldo insuficiente.');
 
@@ -38,7 +40,8 @@ export class TransactionsController {
       if (!pixKey) throw new Error('Chave PIX não encontrada no sistema.');
       if (pixKey.owner_id === sender.id) throw new Error('Você não pode transferir para si mesmo usando esta chave.');
 
-      const receiver = await trx('clients').where({ id: pixKey.owner_id }).first();
+      // Select receiver locking the row
+      const receiver = await trx('clients').where({ id: pixKey.owner_id }).first().forUpdate();
       if (!receiver) throw new Error('Conta destinatária não encontrada.');
 
       // Update saldos

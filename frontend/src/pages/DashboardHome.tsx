@@ -28,10 +28,10 @@ export default function DashboardHome() {
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    api.get('/clients')
+    api.get('/clients/me')
       .then(response => {
-        if (response.data && response.data.length > 0) {
-          setBalance(response.data[0].balance);
+        if (response.data) {
+          setBalance(response.data.balance);
         }
       })
       .catch(console.error);

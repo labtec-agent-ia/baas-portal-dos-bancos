@@ -34,9 +34,10 @@ app.get('/health', (req, res) => {
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rotas Livres (Public)
-app.use('/api/clients', clientsRoutes);
+// (Vazio por enquanto)
 
 // Rotas Protegidas (Requer JWT)
+app.use('/api/clients', authMiddleware, clientsRoutes);
 app.use('/api/pix', authMiddleware, pixRoutes);
 app.use('/api/transactions', authMiddleware, transactionsRoutes);
 

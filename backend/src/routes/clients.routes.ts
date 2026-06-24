@@ -16,6 +16,7 @@ router.post('/', controller.createClient.bind(controller));
  *         description: Array de clientes retornados com sucesso
  */
 router.get('/', controller.listClients.bind(controller));
+router.get('/me', controller.getMe.bind(controller));
 router.get('/:id', controller.getClient.bind(controller));
 
 export default router;

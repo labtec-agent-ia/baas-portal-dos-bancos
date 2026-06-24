@@ -6,20 +6,23 @@ import { redis } from '../config/redis';
 export class PixController {
   async createKey(req: Request, res: Response, next: NextFunction) {
     try {
-      const { key_type, key_value, description } = req.body;
-      const client = await db('clients').first(); // Pega um cliente aleatório apenas para evitar erro de Foreign Key no teste
+      const userId = (req as any).user?.id;
+      if (!userId) return res.status(401).json({ error: { message: 'Não autenticado' } });
+
+      const { key_type, key_value } = req.body;
       
       const newKey = {
         id: uuidv4(),
-        owner_id: client ? client.id : null,
+        owner_id: userId,
         key_type,
         key_value,
         status: 'active'
       };
       
-      if (newKey.owner_id) {
-        await db('pix_keys').insert(newKey);
-      }
+      await db('pix_keys').insert(newKey);
+      
+      // Invalida cache de chaves deste usuário
+      await redis.del(`pix_keys:${userId}`);
 
       res.status(201).json(newKey);
     } catch (error) {
@@ -29,7 +32,10 @@ export class PixController {
 
   async listKeys(req: Request, res: Response, next: NextFunction) {
     try {
-      const cacheKey = 'pix_keys:all';
+      const userId = (req as any).user?.id;
+      if (!userId) return res.status(401).json({ error: { message: 'Não autenticado' } });
+
+      const cacheKey = `pix_keys:${userId}`;
       const cachedKeys = await redis.get(cacheKey);
 
       if (cachedKeys) {
@@ -37,9 +43,8 @@ export class PixController {
       }
 
       const keys = await db('pix_keys')
-        .join('clients', 'pix_keys.owner_id', 'clients.id')
-        .select('pix_keys.id', 'pix_keys.key_type', 'pix_keys.key_value', 'pix_keys.status', 'clients.name as owner')
-        .orderBy('pix_keys.created_at', 'desc');
+        .where({ owner_id: userId })
+        .orderBy('created_at', 'desc');
         
       // Guarda no cache por 10 minutos (600 segundos)
       await redis.setex(cacheKey, 600, JSON.stringify(keys));

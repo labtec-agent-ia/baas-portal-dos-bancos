@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { api } from '../services/api';
 
 import {
   Box,
@@ -23,18 +24,14 @@ export default function PixKeys() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock de chaves PIX
-    const mockKeys = [
-      { id: 1, key_type: 'cpf', key_value: '123.456.789-00', owner: 'João Silva', status: 'active' },
-      { id: 2, key_type: 'email', key_value: 'joao.silva@empresa.com.br', owner: 'João Silva', status: 'active' },
-      { id: 3, key_type: 'phone', key_value: '+55 11 99999-9999', owner: 'João Silva', status: 'inactive' },
-      { id: 4, key_type: 'random', key_value: 'e2b3c4d5-f6a7-8b9c-0d1e-2f3a4b5c6d7e', owner: 'João Silva', status: 'active' }
-    ];
-
-    setTimeout(() => {
-      setKeys(mockKeys);
-      setLoading(false);
-    }, 1000);
+    api.get('/pix')
+      .then(response => {
+        setKeys(response.data);
+      })
+      .catch(console.error)
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const getIcon = (type: string) => {
