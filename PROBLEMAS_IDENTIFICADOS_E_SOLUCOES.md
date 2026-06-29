@@ -45,7 +45,7 @@
 - Se não estiverem configurados, o job falha
 
 **Solução**:
-✅ Usar `continue-on-error: true` (já existe) ou configurar secrets
+✅ Usar `continue-on-error: true` (já existe) ou configurar secrets.
 
 ---
 
