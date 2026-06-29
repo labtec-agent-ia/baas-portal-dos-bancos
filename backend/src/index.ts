@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import pixRoutes from './routes/pix.routes';
 import clientsRoutes from './routes/clients.routes';
 import transactionsRoutes from './routes/transactions.routes';
+import settingsRoutes from './routes/settings.routes';
+import integrationsRoutes from './routes/integrations.routes';
 import { authMiddleware } from './middlewares/authMiddleware';
 import { errorHandler } from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
@@ -40,6 +42,8 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/clients', authMiddleware, clientsRoutes);
 app.use('/api/pix', authMiddleware, pixRoutes);
 app.use('/api/transactions', authMiddleware, transactionsRoutes);
+app.use('/api/settings', authMiddleware, settingsRoutes);
+app.use('/api/integrations', authMiddleware, integrationsRoutes);
 
 // Middleware Global de Erros
 app.use(errorHandler);

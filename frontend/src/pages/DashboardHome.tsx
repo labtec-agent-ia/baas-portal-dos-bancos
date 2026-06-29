@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, IconButton, CircularProgress } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, IconButton, CircularProgress, Button, Alert } from '@mui/material';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
+import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon, CloudSync as CloudSyncIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 import { useDashboardStore } from '../store/useDashboardStore';
 
 const data7days = [
@@ -26,6 +26,9 @@ export default function DashboardHome() {
   const { period, setPeriod } = useDashboardStore();
   const [showBalance, setShowBalance] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
+  const [railzStatus, setRailzStatus] = useState<any>(null);
+  const [loadingRailz, setLoadingRailz] = useState(false);
+  const [railzError, setRailzError] = useState('');
 
   useEffect(() => {
     api.get('/clients/me')
@@ -35,7 +38,28 @@ export default function DashboardHome() {
         }
       })
       .catch(console.error);
+
+    // Fetch Railz Integration Status
+    api.get('/integrations/railz/score')
+      .then(res => setRailzStatus(res.data))
+      .catch(console.error);
   }, []);
+
+  const handleConnectERP = async () => {
+    setLoadingRailz(true);
+    setRailzError('');
+    try {
+      const res = await api.post('/integrations/railz/connect');
+      if (res.data && res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (error: any) {
+      console.error(error);
+      setRailzError(error.response?.data?.error?.message || 'Falha ao conectar. Verifique se as credenciais Railz estão configuradas no painel de Admin.');
+    } finally {
+      setLoadingRailz(false);
+    }
+  };
 
   const data = period === '7days' ? data7days : data30days;
 
@@ -111,6 +135,55 @@ export default function DashboardHome() {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Railz Integration Section */}
+      <Card sx={{ p: 3, mb: 4, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#f8fafc', borderLeft: '4px solid', borderColor: 'primary.light' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <CloudSyncIcon color="primary" fontSize="large" />
+          <Typography variant="h6">Desbloqueie Limite de Crédito</Typography>
+        </Box>
+        
+        {railzError && <Alert severity="error" sx={{ mb: 2 }}>{railzError}</Alert>}
+
+        {railzStatus?.status === 'not_connected' ? (
+          <Box>
+            <Typography variant="body1" sx={{ color: '#cbd5e1', mb: 3 }}>
+              Conecte o seu ERP ou sistema contábil (QuickBooks, Xero, Shopify, etc.) para que nosso Motor de Crédito analise instantaneamente a sua saúde financeira e libere antecipações de recebíveis.
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={handleConnectERP}
+              disabled={loadingRailz}
+            >
+              {loadingRailz ? 'Gerando Link de Conexão...' : 'Conectar Contabilidade (Integração)'}
+            </Button>
+          </Box>
+        ) : railzStatus?.status === 'connected' ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Box>
+              <Typography variant="body2" sx={{ color: '#94a3b8' }}>Seu Score de Crédito Corporativo</Typography>
+              <Typography variant="h3" sx={{ color: '#34d399', fontWeight: 'bold' }}>
+                {railzStatus.scoreData?.score || 850}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" sx={{ color: '#94a3b8' }}>Status do Risco</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CheckCircleIcon sx={{ color: '#34d399' }} />
+                <Typography variant="h6">{railzStatus.scoreData?.risk_level === 'Low' ? 'Baixo' : railzStatus.scoreData?.risk_level || 'Aprovado'}</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ ml: 'auto' }}>
+              <Button variant="outlined" color="primary" sx={{ color: 'primary.light', borderColor: 'primary.light' }}>
+                Simular Antecipação (Em Breve)
+              </Button>
+            </Box>
+          </Box>
+        ) : (
+          <CircularProgress size={24} />
+        )}
+      </Card>
 
       <Card sx={{ p: 3 }}>
         <Typography variant="h6" sx={{ mb: 3 }}>
