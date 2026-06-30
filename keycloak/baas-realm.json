@@ -1,0 +1,71 @@
+{
+  "realm": "baas-realm",
+  "enabled": true,
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Administrador",
+      "lastName": "Sistema",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin", "developer"
+      ]
+    },
+    {
+      "username": "user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Usuario",
+      "lastName": "Teste",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator Role"
+      },
+      {
+        "name": "developer",
+        "description": "Developer Role"
+      },
+      {
+        "name": "user",
+        "description": "Standard User Role"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "baas-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "protocol": "openid-connect"
+    }
+  ]
+}

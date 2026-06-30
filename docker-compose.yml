@@ -9,13 +9,13 @@ services:
       POSTGRES_USER: ${DB_USER:-baas_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_password_123}
       POSTGRES_DB: ${DB_NAME:-baas_portal}
-      POSTGRES_INITDB_ARGS: "-c ssl=on -c ssl_cert_file=/etc/ssl/certs/server.crt -c ssl_key_file=/etc/ssl/private/server.key"
+      # POSTGRES_INITDB_ARGS: "-c ssl=on -c ssl_cert_file=/etc/ssl/certs/server.crt -c ssl_key_file=/etc/ssl/private/server.key"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./certs/db:/etc/ssl/certs
-      - ./certs/db:/etc/ssl/private
+      # - ./certs/db:/etc/ssl/certs
+      # - ./certs/db:/etc/ssl/private
     ports:
-      - "5432:5432"
+      - "5444:5432"
     networks:
       - baas-network
     healthcheck:
@@ -35,7 +35,7 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "6379:6379"
+      - "6399:6379"
     networks:
       - baas-network
     healthcheck:
@@ -51,6 +51,7 @@ services:
   keycloak:
     image: keycloak/keycloak:22.0
     container_name: baas-portal-keycloak
+    command: start-dev
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin123}
@@ -61,7 +62,7 @@ services:
       KC_PROXY: edge
       KC_HTTP_ENABLED: "true"
     ports:
-      - "8080:8080"
+      - "8099:8080"
     networks:
       - baas-network
     depends_on:
@@ -145,7 +146,7 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     ports:
-      - "9090:9090"
+      - "9091:9090"
     networks:
       - baas-network
     command:
@@ -164,7 +165,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
-      - "3001:3000"
+      - "3099:3000"
     networks:
       - baas-network
     depends_on:
