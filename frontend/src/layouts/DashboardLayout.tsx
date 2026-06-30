@@ -23,6 +23,7 @@ import {
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
+  HelpOutline as HelpOutlineIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 260;
@@ -33,6 +34,7 @@ const menuItems = [
   { text: 'Transações', path: '/dashboard/transactions', icon: <ReceiptIcon /> },
   { text: 'Chaves PIX', path: '/dashboard/pix-keys', icon: <VpnKeyIcon /> },
   { text: 'Admin', path: '/dashboard/admin', icon: <SettingsIcon /> },
+  { text: 'Ajuda (FAQ)', path: '/dashboard/faq', icon: <HelpOutlineIcon /> },
 ];
 
 export default function DashboardLayout() {

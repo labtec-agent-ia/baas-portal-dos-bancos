@@ -5,6 +5,7 @@ import DashboardHome from './pages/DashboardHome';
 import Clients from './pages/Clients';
 import Transactions from './pages/Transactions';
 import PixKeys from './pages/PixKeys';
+import FAQ from './pages/FAQ';
 
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="transactions" element={<Transactions />} />
         <Route path="pix-keys" element={<PixKeys />} />
         <Route path="admin" element={<AdminDashboard />} />
+        <Route path="faq" element={<FAQ />} />
       </Route>
     </Routes>
   );
