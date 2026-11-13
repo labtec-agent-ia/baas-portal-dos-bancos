@@ -19,7 +19,8 @@
 
 ### Como reportar:
 1. **Email**: security@baas-portal-dos-bancos.com
-2. **Inclua**:
+2. **Email**: macaevo@melorvian.com
+3. **Inclua**:
    - Descrição da vulnerabilidade
    - Passos para reproduzir
    - Impacto potencial
@@ -164,9 +165,9 @@ npm audit
 
 ### 8.2 Contactos de Emergência
 
-- 🚨 Coordenador de Segurança: security-lead@example.com
-- 🚨 CTO: cto@example.com
-- 🚨 Jurídico: legal@example.com
+- 🚨 Coordenador de Segurança: macaevo@melorvian.com
+- 🚨 CTO: macaevo@melorvian.com
+- 🚨 Jurídico: macaevo@melorvian.com
 
 ## 9. Conformidade
 
